@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hệ Thống Tính Lương NGSA</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎖️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="stripe"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="badge">🎖️</div>
+    <div class="header-text">
+      <h1>HỆ THỐNG TÍNH LƯƠNG TỰ ĐỘNG</h1>
+      <p class="subtitle">NATIONAL GUARD SAN ANDREAS · NGSA</p>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- QUỸ LƯƠNG TUẦN -->
+  <section class="panel" id="panel-fund">
+    <h2><span class="icon">💰</span> Quỹ Lương Tuần</h2>
+    <div class="fund-row">
+      <div class="fund-input-wrap">
+        <input type="text" inputmode="numeric" id="fundInput" placeholder="Ví dụ: 1200000" autocomplete="off">
+        <span class="fund-suffix">Credits</span>
+      </div>
+    </div>
+    <p class="hint">Nhập số Credits Admin đã cấp cho tuần này. Có thể đổi bất cứ lúc nào.</p>
+  </section>
+
+  <!-- THÊM THÀNH VIÊN -->
+  <section class="panel" id="panel-add">
+    <h2><span class="icon">👤</span> Thêm Thành Viên</h2>
+    <form id="addForm" class="member-form">
+      <div class="field">
+        <label for="memberName">Tên thành viên</label>
+        <input type="text" id="memberName" placeholder="Nhập tên" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label for="memberRank">Rank</label>
+        <select id="memberRank" required></select>
+      </div>
+      <div class="rank-preview" id="rankPreview"></div>
+      <button type="submit" class="btn btn-primary">➕ Thêm Thành Viên</button>
+    </form>
+  </section>
+
+  <!-- DANH SÁCH -->
+  <section class="panel" id="panel-list">
+    <h2><span class="icon">📋</span> Danh Sách Lương Tuần</h2>
+    <div id="memberList" class="member-list">
+      <p class="empty-state" id="emptyState">Chưa có thành viên nào. Thêm thành viên ở trên để bắt đầu.</p>
+    </div>
+  </section>
+
+  <!-- TÍNH LƯƠNG -->
+  <section class="panel panel-calc" id="panel-calc">
+    <button id="calcBtn" class="btn btn-calc">💰 TÍNH LƯƠNG</button>
+
+    <div class="results" id="results">
+      <div class="result-card">
+        <span class="result-label">💰 Quỹ Tuần</span>
+        <span class="result-value" id="resFund">0 Credits</span>
+      </div>
+      <div class="result-card">
+        <span class="result-label">👥 Tổng Thành Viên</span>
+        <span class="result-value" id="resCount">0 người</span>
+      </div>
+      <div class="result-card">
+        <span class="result-label">💸 Tổng Lương</span>
+        <span class="result-value" id="resTotal">0 Credits</span>
+      </div>
+      <div class="result-card result-status" id="resStatusCard">
+        <span class="result-label" id="resStatusLabel">🟢 Còn Dư</span>
+        <span class="result-value" id="resRemaining">0 Credits</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BÁO CÁO LƯƠNG (CHỤP ẢNH GỬI ADMIN) -->
+  <section class="panel" id="panel-report">
+    <h2><span class="icon">📸</span> Báo Cáo Lương</h2>
+    <div class="report-box" id="reportBox">
+      <ol class="report-list" id="reportList"></ol>
+      <p class="empty-state" id="reportEmpty">Chưa có thành viên nào.</p>
+      <div class="report-total" id="reportTotal">Tổng : 0 Credits</div>
+    </div>
+    <p class="hint">Chụp màn hình khung này để gửi báo cáo lương cho Admin.</p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>© 2026 NGSA — National Guard San Andreas. All Rights Reserved.</p>
+</footer>
+
+<!-- MODAL SỬA THÀNH VIÊN -->
+<div class="modal-overlay" id="editOverlay">
+  <div class="modal">
+    <h3>✏️ Chỉnh Sửa Thành Viên</h3>
+    <form id="editForm">
+      <input type="hidden" id="editId">
+      <div class="field">
+        <label for="editName">Tên</label>
+        <input type="text" id="editName" required autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="editRank">Rank</label>
+        <select id="editRank" required></select>
+      </div>
+      <div class="rank-preview" id="editRankPreview"></div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">💾 Lưu Thay Đổi</button>
+        <button type="button" class="btn btn-ghost" id="editCancel">❌ Hủy</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL LƯƠNG THƯỞNG -->
+<div class="modal-overlay" id="bonusOverlay">
+  <div class="modal">
+    <h3>💎 Ghi Lương Thưởng</h3>
+    <p class="bonus-member-name" id="bonusMemberName"></p>
+    <form id="bonusForm">
+      <input type="hidden" id="bonusId">
+      <div class="field">
+        <label for="bonusAmount">Số Credits thưởng thêm</label>
+        <input type="text" inputmode="numeric" id="bonusAmount" placeholder="Ví dụ: 20000" autocomplete="off">
+      </div>
+      <div class="bonus-preview" id="bonusPreview"></div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">💾 Lưu Thưởng</button>
+        <button type="button" class="btn btn-ghost" id="bonusCancel">❌ Hủy</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL XÓA -->
+<div class="modal-overlay" id="deleteOverlay">
+  <div class="modal modal-danger">
+    <h3>🗑️ Xóa Thành Viên</h3>
+    <p id="deleteMessage">Bạn có chắc muốn xóa thành viên này?</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-danger" id="deleteConfirm">Xóa</button>
+      <button type="button" class="btn btn-ghost" id="deleteCancel">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
